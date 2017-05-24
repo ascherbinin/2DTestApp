@@ -5,57 +5,46 @@ using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
-    public float levelStartDelay = 2f;                      //Time to wait before starting level, in seconds.
-    public static GameManager instance = null;              //Static instance of GameManager which allows it to be accessed by any other script.
+    public float levelStartDelay = 1.5f;
+    public int numbersOfImage = 7;
+    public static GameManager instance = null;             
     public Canvas MenuUI;
     public Canvas GameUI;
     public Canvas TransictionUI;
     public GameObject cube;
     public GameObject image;
-    public Text levelText;                                 
+    public Text levelText;
 
- 
-    //Awake is always called before any Start functions
+    public List<GameObject> imageList = new List<GameObject>();
+	public List<GameObject> viewedImages = new List<GameObject>();
+
+    private GameObject currentImage;
+    private Vector2 centerPosition = new Vector2(0,0);
+    private Vector2 poolPosition = new Vector2(-15, -15);
+
+
     void Awake()
-    {
-        //Check if instance already exists
+	{
         if (instance == null)
-
-            //if not, set instance to this
             instance = this;
-
-        //If instance already exists and it's not this:
         else if (instance != this)
-
-            //Then destroy this. This enforces our singleton pattern, meaning there can only ever be one instance of a GameManager.
             Destroy(gameObject);
-
-        //Sets this to not be destroyed when reloading scene
         DontDestroyOnLoad(gameObject);
-
-        //Call the InitGame function to initialize the first level 
-        //InitGame();
     }
 
-
-    //Initializes the game for each level.
+    void Start()
+    {
+        CreatePoolImage();
+    }
+		
     public void InitGame()
     {
 
         levelText.text = "Игра начинается ";
         HideMenu();
-        //levelImage.SetActive(true);
         StartCoroutine("HideLevelImage", levelStartDelay);
     }
 
-
-    //Hides black image used between levels
-    //void HideLevelImage()
-    //{
-    //    //Disable the levelImage gameObject.
-    //    TransictionUI.gameObject.SetActive(false);
-    //    GameUI.gameObject.SetActive(true);
-    //}
 
     //Hides black image used between levels
     void HideMenu()
@@ -80,19 +69,33 @@ public class GameManager : MonoBehaviour
 
     }
 
-     //GameOver is called when the player reaches 0 food points
-    public void GameOver()
-    {
-
-    }
 
     void StartGame()
     {
-        InitNewImage();
+        ChangeImage();
     }
 
-    public void InitNewImage()
+    public void ChangeImage()
     {
-        Instantiate(image, new Vector2(0, 0), Quaternion.identity);
+		if (currentImage != null)
+			currentImage.transform.position = poolPosition;
+        int imgIdx = Random.Range(0, imageList.Count - 1);
+        Debug.Log("IDX: " + imgIdx);
+        currentImage = imageList[imgIdx];
+        currentImage.transform.position = centerPosition;
+		viewedImages.Add (imageList [imgIdx]);
+		imageList.Remove (currentImage);
+		if (imageList.Count == 0)
+			imageList = viewedImages;
+    }
+
+    void CreatePoolImage()
+    {
+        for (int i = 1; i <= numbersOfImage; i++)
+        {
+            var imageBox = Instantiate(image, poolPosition, Quaternion.identity);
+            imageBox.GetComponent<ImageBox>().Setup(i, "");
+            imageList.Add(imageBox);
+        }
     }
 }

@@ -32,12 +32,11 @@ public class MouseMove : MonoBehaviour
             isReturning = true;
         else
         {
-            Destroy(gameObject);
             if (isRight)
                 ScoreManager.instance.AddScore(CounterSide.Right);
             else
                 ScoreManager.instance.AddScore(CounterSide.Left);
-            GameManager.instance.InitNewImage();
+            GameManager.instance.ChangeImage();
         }
         //    GameManager.instance.ChangeSquare();
         Debug.Log("Distance to other: " + dist);
