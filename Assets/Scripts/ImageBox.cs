@@ -12,9 +12,8 @@ public class ImageBox : MonoBehaviour
 
     private string[] msgs = new string[] { "opa opa opa", "param pram pam", "kis kis kis krya", "opa pacanchik na prikole", "opa pacanchik na prikole opa pacanchik na prikole \n opa pacanchik na prikole" };
 
-    void Start ()
+    void Awake ()
     {
-        gameObject.GetComponent<SpriteRenderer>().color = new Color(Random.Range(0.0F, 1.0F), Random.Range(0.0F, 1.0F), Random.Range(0.0F, 1.0F));
         _renderer = GetComponent<SpriteRenderer>();
 	}
 	
@@ -23,9 +22,12 @@ public class ImageBox : MonoBehaviour
 		
 	}
 
-    public void Setup(int id, string text)
+	public void Setup(int id)
     {
         ID = id;
-		LblText.text = id.ToString();
+		ImageInfo imgInfo = ImageDictionary.Images [id];
+		LblText.text = imgInfo.Text;
+		Sprite sprite = Resources.Load (imgInfo.ImagePath, typeof(Sprite)) as Sprite; 
+		_renderer.sprite = sprite;
     }
 }

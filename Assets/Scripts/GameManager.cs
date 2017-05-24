@@ -77,16 +77,20 @@ public class GameManager : MonoBehaviour
 
     public void ChangeImage()
     {
+		if (imageList.Count == 0) 
+		{
+			imageList.AddRange(viewedImages);
+			viewedImages.Clear ();
+		}
+
 		if (currentImage != null)
 			currentImage.transform.position = poolPosition;
-        int imgIdx = Random.Range(0, imageList.Count - 1);
-        Debug.Log("IDX: " + imgIdx);
+        int imgIdx = Random.Range(0, imageList.Count);
         currentImage = imageList[imgIdx];
         currentImage.transform.position = centerPosition;
-		viewedImages.Add (imageList [imgIdx]);
+		viewedImages.Add (currentImage);
 		imageList.Remove (currentImage);
-		if (imageList.Count == 0)
-			imageList = viewedImages;
+
     }
 
     void CreatePoolImage()
@@ -94,7 +98,7 @@ public class GameManager : MonoBehaviour
         for (int i = 1; i <= numbersOfImage; i++)
         {
             var imageBox = Instantiate(image, poolPosition, Quaternion.identity);
-            imageBox.GetComponent<ImageBox>().Setup(i, "");
+            imageBox.GetComponent<ImageBox>().Setup(i);
             imageList.Add(imageBox);
         }
     }
