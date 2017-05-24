@@ -32,11 +32,11 @@ public class GameManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    void Start()
-    {
-        CreatePoolImage();
-    }
-		
+	void Start ()
+	{
+		CreatePoolImage ();
+	}
+
     public void InitGame()
     {
 
@@ -46,7 +46,6 @@ public class GameManager : MonoBehaviour
     }
 
 
-    //Hides black image used between levels
     void HideMenu()
     {
         cube.SetActive(false);
@@ -72,16 +71,16 @@ public class GameManager : MonoBehaviour
 
     void StartGame()
     {
+		//CreatePoolImage ();
         ChangeImage();
     }
 
     public void ChangeImage()
     {
-		if (imageList.Count == 0) 
-		{
-			imageList.AddRange(viewedImages);
+		if (imageList.Count == 0 && viewedImages.Count != 0) {
+			imageList.AddRange (viewedImages);
 			viewedImages.Clear ();
-		}
+		} 
 
 		if (currentImage != null)
 			currentImage.transform.position = poolPosition;
@@ -102,4 +101,21 @@ public class GameManager : MonoBehaviour
             imageList.Add(imageBox);
         }
     }
+
+	public void BackToMenu()
+	{
+		HideGame ();
+		currentImage.transform.position = poolPosition;
+		imageList.AddRange (viewedImages);
+		//imageList.Clear ();
+		viewedImages.Clear ();
+	}
+
+	void HideGame()
+	{
+		GameUI.gameObject.SetActive(false);
+		cube.SetActive(true);
+		MenuUI.enabled = true;
+
+	}
 }
