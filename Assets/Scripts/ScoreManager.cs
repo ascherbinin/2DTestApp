@@ -14,8 +14,21 @@ public class ScoreManager : MonoBehaviour
     public Text rightCounter;
     public Text leftCounter;
 
-    public int LeftCnt { get; set; }
-    public int RightCnt { get; set; }
+    private int leftC;
+    private int rightC;
+
+    public int LeftCnt { get { return leftC; } set { leftC = value;
+            UpdateLabels();
+        } }
+    public int RightCnt
+    {
+        get { return rightC; }
+        set
+        {
+            rightC = value;
+            UpdateLabels();
+        }
+    }
     public static ScoreManager instance = null;
 
 

@@ -21,7 +21,8 @@ public class GameManager : MonoBehaviour
     private GameObject currentImage;
     private Vector2 centerPosition = new Vector2(0,0);
     private Vector2 poolPosition = new Vector2(-15, -15);
-
+    private bool isLoaded = false;
+    private bool isBacked = false;
 
     void Awake()
 	{
@@ -32,10 +33,11 @@ public class GameManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-	void Start ()
-	{
-		CreatePoolImage ();
-	}
+    void Start()
+    {
+        CreatePoolImage();
+        
+    }
 
     public void InitGame()
     {
@@ -71,34 +73,62 @@ public class GameManager : MonoBehaviour
 
     void StartGame()
     {
-		//CreatePoolImage ();
+        var gi = SaveLoadManager.Load();
+        if (gi != null)
+        {
+            isLoaded = true;
+            var imgID = -1;
+            if (isBacked)
+                imgID = gi.idImage;
+            else
+                imgID = gi.idImage - 1;
+            currentImage = imageList[imgID];
+            ScoreManager.instance.LeftCnt = gi.leftCnt;
+            ScoreManager.instance.RightCnt = gi.rightCnt;
+        }
         ChangeImage();
     }
 
     public void ChangeImage()
     {
-		if (imageList.Count == 0 && viewedImages.Count != 0) {
-			imageList.AddRange (viewedImages);
-			viewedImages.Clear ();
-		} 
+        if (isLoaded)
+        {
+            currentImage.transform.position = centerPosition;
+            isLoaded = false;
+            isBacked = false;
+        }
+        else
+        {
+            if (imageList.Count == 0 && viewedImages.Count != 0)
+            {
+                imageList.AddRange(viewedImages);
+                viewedImages.Clear();
+            }
 
-		if (currentImage != null)
-			currentImage.transform.position = poolPosition;
-        int imgIdx = Random.Range(0, imageList.Count);
-        currentImage = imageList[imgIdx];
-        currentImage.transform.position = centerPosition;
-		viewedImages.Add (currentImage);
+            if (currentImage != null)
+                currentImage.transform.position = poolPosition;
+
+            var imgIdx = Random.Range(0, imageList.Count);
+
+            currentImage = imageList[imgIdx];
+            currentImage.transform.position = centerPosition;
+        }
+        viewedImages.Add (currentImage);
 		imageList.Remove (currentImage);
 
+        SaveLoadManager.Save(currentImage.GetComponent<ImageBox>().ID, ScoreManager.instance.LeftCnt, ScoreManager.instance.RightCnt);
     }
 
     void CreatePoolImage()
     {
+        var go = new GameObject();
+        go.name = "ImagesPool";
         for (int i = 1; i <= numbersOfImage; i++)
         {
             var imageBox = Instantiate(image, poolPosition, Quaternion.identity);
             imageBox.GetComponent<ImageBox>().Setup(i);
             imageList.Add(imageBox);
+            imageBox.transform.parent = go.transform;
         }
     }
 
@@ -109,6 +139,7 @@ public class GameManager : MonoBehaviour
 		imageList.AddRange (viewedImages);
 		//imageList.Clear ();
 		viewedImages.Clear ();
+        isBacked = true;
 	}
 
 	void HideGame()
