@@ -10,8 +10,6 @@ public class ImageBox : MonoBehaviour
 
     public Text LblText;
 
-    private string[] msgs = new string[] { "opa opa opa", "param pram pam", "kis kis kis krya", "opa pacanchik na prikole", "opa pacanchik na prikole opa pacanchik na prikole \n opa pacanchik na prikole" };
-
     void Awake ()
     {
         _renderer = GetComponent<SpriteRenderer>();
